@@ -1,33 +1,11 @@
-import React, {useEffect, useRef} from "react";
+import React, {useState} from "react";
 import PropTypes from "prop-types";
+import {TitleText, TitleWrapper} from "components/core/core.bubble.styles";
+import ToolTip from "components/core/core.tooltip";
 
-const CoreBubble = ({size, title}) => {
-    const bubbleCanvasRef = useRef(null);
-
-    useEffect(() => {
-        const bubbleCanvas = bubbleCanvasRef.current;
-        const context = bubbleCanvas.getContext("2d");
-        drawBubble(context);
-    });
-
-    const drawBubble = (context) => {
-        const randomNumber = Math.floor(Math.random()*16777215)
-        const randomColour = randomNumber.toString(16);
-
-        console.log(randomNumber)
-
-        context.fillStyle = `#${randomColour}`;
-        context.styles = { border: `1px solid #${randomColour}`}
-        const centerX = size/2;
-        const centerY = size/2;
-        const radius = size/2;
-        context.arc(centerX, centerY, radius, 0, 7, false);
-        context.fill();
-
-        context.fillStyle = calculateFontColour(randomNumber);
-        context.textAlign = "center";
-        context.fillText(title, centerX, centerY);
-    };
+const CoreBubble = ({size, title, x, y}) => {
+    const [isHovered, setIsHovered] = useState(false);
+    const [randomNumber] = useState(Math.floor(Math.random() * 16777215));
 
     const calculateFontColour = (randomNumber) => {
         const MAX_INT = 16777215;
@@ -36,24 +14,43 @@ const CoreBubble = ({size, title}) => {
         }
         return "white";
     }
+    console.log(isHovered);
 
     return (
-        <canvas
-            ref={bubbleCanvasRef}
-            width={size}
-            height={size}
-            // onMouseOver={} somebullshit animation
-        >
-            {title}
-        </canvas>
+        <>
+            <svg
+                width={size.value/2}
+                height={size.value/2}
+                viewBox={`0 0 ${size.value} ${size.value}`}
+                onMouseOver={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+            >
+                <circle
+                    cx={size.value/2}
+                    cy={size.value/2}
+                    r={size.value/2}
+                    fill={`#${randomNumber.toString(16)}`}
+                />
+                <foreignObject x={0} y={0} width={size.value} height={size.value}>
+                    <TitleWrapper size={size.value}>
+                        <TitleText title={title} fontColour={calculateFontColour(randomNumber)}>
+                            {title}
+                        </TitleText>
+                    </TitleWrapper>
+                </foreignObject>
+            </svg>
+            {isHovered &&
+                <ToolTip textValues={[size, x, y]}/>
+            }
+        </>
     )
-}
+};
 
 CoreBubble.propType = {
-    // x: PropTypes.number.isRequired,
-    // y: PropTypes.number.isRequired,
-    size: PropTypes.number.isRequired,
+    size: PropTypes.objectOf([PropTypes.number, PropTypes.string]).isRequired,
     title: PropTypes.string.isRequired,
+    x: PropTypes.objectOf([PropTypes.number, PropTypes.string]).isRequired,
+    y: PropTypes.objectOf([PropTypes.number, PropTypes.string]).isRequired,
 };
 
 export default CoreBubble;

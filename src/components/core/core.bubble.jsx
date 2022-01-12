@@ -14,7 +14,6 @@ const CoreBubble = ({size, title, x, y}) => {
         }
         return "white";
     }
-    console.log(isHovered);
 
     return (
         <>

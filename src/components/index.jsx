@@ -6,7 +6,23 @@ import PropTypes from "prop-types";
 
 const LandingPage = ({getGraphData, graphData}) => {
     const [parsedGraphData, setParsedData] = useState();
-    const size = 200;
+    const HEADERS = {
+        title: {
+            key: "title",
+        },
+        size: {
+            key: "salary",
+            label: "Salary",
+        },
+        x: {
+            key: "compratio",
+            label: "Compratio",
+        },
+        y: {
+            key: "headcount",
+            label: "Headcount",
+        }
+    };
 
     useEffect(() => {
         if (!graphData) {
@@ -17,20 +33,19 @@ const LandingPage = ({getGraphData, graphData}) => {
     useEffect(() => {
         const parseGraphData = (graphData) => {
             const updatedData = graphData.map(gData => {
-                const {title, salary, compratio, headcount} = gData;
                 return {
-                    title: title,
+                    title: gData[HEADERS.title.key],
                     size: {
-                        name: "Salary",
-                        value: salary,
+                        name: HEADERS.size.label,
+                        value: gData[HEADERS.size.key],
                     },
                     x: {
-                        name: "Compratio",
-                        value: compratio
+                        name: HEADERS.x.label,
+                        value: gData[HEADERS.x.key],
                     },
                     y: {
-                        name: "Headcount",
-                        value: headcount
+                        name: HEADERS.y.label,
+                        value: gData[HEADERS.y.key],
                     }
                 };
             });

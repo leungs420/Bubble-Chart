@@ -1,28 +1,34 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useLayoutEffect, useMemo, useState} from "react";
 import CoreBubble from "components/core/core.bubble";
 import {connect} from "react-redux";
 import {getGraphData} from "redux/redux.actions";
 import PropTypes from "prop-types";
+import XYPlot from "components/core/core.graph";
 
 const LandingPage = ({getGraphData, graphData}) => {
     const [parsedGraphData, setParsedData] = useState();
-    const HEADERS = {
-        title: {
-            key: "title",
-        },
-        size: {
-            key: "salary",
-            label: "Salary",
-        },
-        x: {
-            key: "compratio",
-            label: "Compratio",
-        },
-        y: {
-            key: "headcount",
-            label: "Headcount",
-        }
-    };
+    const [xAxis, setXAxis] = useState();
+    const [yAxis, setYAxis] = useState();
+
+    const HEADERS = useMemo(() => {
+        return {
+            title: {
+                key: "title",
+            },
+            size: {
+                key: "salary",
+                label: "Salary",
+            },
+            x: {
+                key: "compratio",
+                label: "Compratio",
+            },
+            y: {
+                key: "headcount",
+                label: "Headcount",
+            }
+        };
+    }, []);
 
     useEffect(() => {
         if (!graphData) {
@@ -30,9 +36,26 @@ const LandingPage = ({getGraphData, graphData}) => {
         }
     }, [getGraphData, graphData]);
 
-    useEffect(() => {
-        const parseGraphData = (graphData) => {
+    const parseGraphData = useCallback(
+        (graphData) => {
+            let minX = Number.MAX_SAFE_INTEGER;
+            let maxX = -Number.MAX_SAFE_INTEGER;
+            let minY = Number.MAX_SAFE_INTEGER;
+            let maxY = -Number.MAX_SAFE_INTEGER;
+
             const updatedData = graphData.map(gData => {
+                if (gData[HEADERS.x.key] <= minX) {
+                    minX = gData[HEADERS.x.key];
+                }
+                if (gData[HEADERS.x.key] >= maxX) {
+                    maxX = gData[HEADERS.x.key];
+                }
+                if (gData[HEADERS.y.key] <= minY) {
+                    minY = gData[HEADERS.y.key];
+                }
+                if (gData[HEADERS.y.key] >= maxY) {
+                    maxY = gData[HEADERS.y.key];
+                }
                 return {
                     title: gData[HEADERS.title.key],
                     size: {
@@ -51,25 +74,30 @@ const LandingPage = ({getGraphData, graphData}) => {
             });
 
             setParsedData(updatedData);
-        };
+            setXAxis({min: minX, max: maxX});
+            setYAxis({min: minY, max: maxY});
+        },
+        [setParsedData, setXAxis, setYAxis, HEADERS]
+    );
 
+    useEffect(() => {
         if(graphData && !parsedGraphData) {
             parseGraphData(graphData);
         }
-    }, [graphData, parsedGraphData, setParsedData]);
+    }, [graphData, parsedGraphData, parseGraphData]);
 
     console.log(parsedGraphData);
 
     return (
         <div>
-            <h1>Welcome to my application!</h1>
-            {
-                parsedGraphData && parsedGraphData.map(pgd => {
-                    return (
-                        <CoreBubble size={pgd.size} title={pgd.title} x={pgd.x} y={pgd.y}/>
-                    );
-                })
-            }
+            <XYPlot x={xAxis} y={yAxis} parsedGraphData={parsedGraphData}/>
+            {/*{*/}
+            {/*    parsedGraphData && parsedGraphData.map(pgd => {*/}
+            {/*        return (*/}
+            {/*            <CoreBubble size={pgd.size} title={pgd.title} x={pgd.x} y={pgd.y}/>*/}
+            {/*        );*/}
+            {/*    })*/}
+            {/*}*/}
         </div>
     )
 };

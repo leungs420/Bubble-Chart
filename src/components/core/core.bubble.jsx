@@ -20,13 +20,13 @@ const CoreBubble = ({size, title, x, y}) => {
             <svg
                 width={size.value/2}
                 height={size.value/2}
-                viewBox={`0 0 ${size.value} ${size.value}`}
+                viewBox={`${x} ${y} ${size.value/2} ${size.value/2}`}
                 onMouseOver={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
             >
                 <circle
-                    cx={size.value/2}
-                    cy={size.value/2}
+                    cx={x}
+                    cy={y}
                     r={size.value/2}
                     fill={`#${randomNumber.toString(16)}`}
                 />

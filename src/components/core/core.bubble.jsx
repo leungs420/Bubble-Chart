@@ -21,6 +21,7 @@ const CoreBubble = ({size, title, x, y}) => {
                     cy={y.coords}
                     fill={`#${randomNumber.toString(16)}`}
                     r={size.value/5}
+                    data-testid={"circle"}
                 />
                 <foreignObject
                     x={x.coords-35}

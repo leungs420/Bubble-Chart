@@ -1,10 +1,8 @@
 import React, {useState} from "react";
 import PropTypes from "prop-types";
 import {TitleText, TitleWrapper} from "components/core/core.bubble.styles";
-import ToolTip from "components/core/core.tooltip";
 
 const CoreBubble = ({size, title, x, y}) => {
-    const [isHovered, setIsHovered] = useState(false);
     const [randomNumber] = useState(Math.floor(Math.random() * 16777215));
 
     const calculateFontColour = (randomNumber) => {
@@ -17,30 +15,31 @@ const CoreBubble = ({size, title, x, y}) => {
 
     return (
         <>
-            <svg
-                width={size.value/2}
-                height={size.value/2}
-                viewBox={`${x} ${y} ${size.value/2} ${size.value/2}`}
-                onMouseOver={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-            >
+            <svg>
                 <circle
-                    cx={x}
-                    cy={y}
-                    r={size.value/2}
+                    cx={x.coords}
+                    cy={y.coords}
                     fill={`#${randomNumber.toString(16)}`}
+                    r={size.value/5}
                 />
-                <foreignObject x={0} y={0} width={size.value} height={size.value}>
-                    <TitleWrapper size={size.value}>
-                        <TitleText title={title} fontColour={calculateFontColour(randomNumber)}>
+                <foreignObject
+                    x={x.coords-35}
+                    y={y.coords-35}
+                    width={size.value/2.5}
+                    height={size.value/2.5}>
+                    <TitleWrapper size={size.value/5}>
+                        <TitleText
+                            title={`Title: ${title}\n${size.name}: ${size.value}\n`+
+                                `${x.keyVal.name}: ${x.keyVal.value}\n`+
+                                `${y.keyVal.name}: ${y.keyVal.value}`
+                            }
+                            fontColour={calculateFontColour(randomNumber)}
+                        >
                             {title}
                         </TitleText>
                     </TitleWrapper>
                 </foreignObject>
             </svg>
-            {isHovered &&
-                <ToolTip textValues={[size, x, y]}/>
-            }
         </>
     )
 };

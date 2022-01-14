@@ -1,5 +1,4 @@
-import React, {useCallback, useEffect, useLayoutEffect, useMemo, useState} from "react";
-import CoreBubble from "components/core/core.bubble";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {connect} from "react-redux";
 import {getGraphData} from "redux/redux.actions";
 import PropTypes from "prop-types";
@@ -86,18 +85,9 @@ const LandingPage = ({getGraphData, graphData}) => {
         }
     }, [graphData, parsedGraphData, parseGraphData]);
 
-    console.log(parsedGraphData);
-
     return (
         <div>
             <XYPlot x={xAxis} y={yAxis} parsedGraphData={parsedGraphData}/>
-            {/*{*/}
-            {/*    parsedGraphData && parsedGraphData.map(pgd => {*/}
-            {/*        return (*/}
-            {/*            <CoreBubble size={pgd.size} title={pgd.title} x={pgd.x} y={pgd.y}/>*/}
-            {/*        );*/}
-            {/*    })*/}
-            {/*}*/}
         </div>
     )
 };
